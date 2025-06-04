@@ -36,6 +36,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfigData["Key"])),
             ClockSkew = TimeSpan.FromMinutes(10)
         };
+        
+        options.TokenValidationParameters.RoleClaimType = "role";
     });
 
 

@@ -25,8 +25,19 @@ namespace APBD_task_11.Controllers
 
         [HttpPost]
 
-        public IActionResult Login([FromBody] AccountDto account, CancellationToken cancellationToken)
+        public async Task<IActionResult> Login([FromBody] AccountDto accountDto, CancellationToken cancellationToken)
         {
+            var account = await _accountService.GetAccountByUsernameAsync(accountDto.Username);
+            if (account == null)
+                return Unauthorized("Invalid username or password.");
+            
+            var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(account, account.Password, accountDto.Password);
+            if (passwordVerificationResult == PasswordVerificationResult.Failed)
+                return Unauthorized("Invalid username or password.");
+            
+            var token = _tokenService.GenerateToken(account.Username, account.Role.Name);
+
+            return Ok(new { token });
         }
     }
 }

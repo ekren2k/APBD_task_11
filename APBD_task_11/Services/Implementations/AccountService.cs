@@ -34,4 +34,19 @@ public class AccountService : IAccountService
         account.Password = _passwordHasher.HashPassword(account, accountDto.Password);
         await _accountRepository.AddAccountAsync(account);
     }
+    public async Task<bool> UsernameExistsAsync(string username)
+    {
+        return await _accountRepository.UsernameExistsAsync(username);
+    }
+
+    public async Task<Account?> GetAccountByUsernameAsync(string username)
+    {
+        return await _accountRepository.GetAccountByUsernameAsync(username);
+    }
+
+    public async Task<Account> AddAccountAsync(Account account)
+    {
+        account.Password = _passwordHasher.HashPassword(account, account.Password);
+        return await _accountRepository.AddAccountAsync(account);
+    }
 }
