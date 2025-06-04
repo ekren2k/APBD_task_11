@@ -14,7 +14,7 @@ to run the app, create an appsettings.json file with the following configuration
   "Jwt" : {
       "Issuer" : "http://localhost:5300",
       "Audience" : "http://localhost:5300",
-      "Key" : "AbsolutelySecretKEy",
+      "Key" : "YourAbsolutelySecretKey",
       "ValidInMinutes" : 10
   }
 }
