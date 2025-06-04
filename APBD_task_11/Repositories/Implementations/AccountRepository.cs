@@ -33,4 +33,17 @@ public class AccountRepository : IAccountRepository
         await _context.SaveChangesAsync();
         return account;
     }
+    
+    public async Task<Account?> GetAccountByIdAsync(int id)
+    {
+        return await _context.Accounts
+            .Include(a => a.Role)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
+
+    public async Task UpdateAccountAsync(Account account)
+    {
+        _context.Accounts.Update(account);
+        await _context.SaveChangesAsync();
+    }
 }

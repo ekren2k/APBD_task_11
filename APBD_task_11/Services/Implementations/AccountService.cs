@@ -16,7 +16,7 @@ public class AccountService : IAccountService
         _accountRepository = accountRepository;
     }
 
-    public async Task RegisterAsync(AccountDto accountDto)
+    public async Task RegisterAsync(CreateAccountDto accountDto)
     {
         if (string.IsNullOrWhiteSpace(accountDto.Username))
             throw new ArgumentException("Username cannot be empty", nameof(accountDto.Username));
@@ -28,7 +28,8 @@ public class AccountService : IAccountService
         {
             Username = accountDto.Username,
             Password = accountDto.Password,
-            RoleId = 1 //1 for user, 2 for admin
+            RoleId = 1,//1 for user, 2 for admin
+            EmployeeId = accountDto.EmployeeId
         };
 
         account.Password = _passwordHasher.HashPassword(account, accountDto.Password);
@@ -48,5 +49,31 @@ public class AccountService : IAccountService
     {
         account.Password = _passwordHasher.HashPassword(account, account.Password);
         return await _accountRepository.AddAccountAsync(account);
+    }
+    public async Task<Account?> GetAccountByIdAsync(int id)
+    {
+        return await _accountRepository.GetAccountByIdAsync(id);
+    }
+    
+    public async Task UpdateAccountAsync(int accountId, AccountDto dto)
+    {
+        var account = await _accountRepository.GetAccountByIdAsync(accountId);
+        if (account == null)
+            throw new KeyNotFoundException("Account not found");
+        
+        if (!string.IsNullOrWhiteSpace(dto.Username))
+        {
+            if (await _accountRepository.UsernameExistsAsync(dto.Username) && dto.Username != account.Username)
+                throw new ArgumentException("Username is already taken");
+
+            account.Username = dto.Username;
+        }
+        
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            account.Password = _passwordHasher.HashPassword(account, dto.Password);
+        }
+        
+        await _accountRepository.UpdateAccountAsync(account);
     }
 }

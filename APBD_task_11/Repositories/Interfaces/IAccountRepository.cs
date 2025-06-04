@@ -9,4 +9,6 @@ public interface IAccountRepository
     Task<Account?> GetAccountByUsernameAsync(string username);
     
     Task<Account> AddAccountAsync(Account account);
+    Task<Account?> GetAccountByIdAsync(int id);
+    Task UpdateAccountAsync(Account account); 
 }
