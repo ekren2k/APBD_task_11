@@ -37,24 +37,5 @@ namespace APBD_task_11.Controllers
 
             return CreatedAtAction(nameof(Register), new { username = newAccount.Username }, null);
         }
-        [Authorize(Roles = "User,Admin")]
-        [HttpGet("me")]
-        public async Task<IActionResult> GetMyAccountInfo()
-        {
-            var accountId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var account = await _accountService.GetAccountByIdAsync(accountId);
-            if (account == null) return NotFound();
-
-            return Ok(account);
-        }
-
-        [Authorize(Roles = "User,Admin")]
-        [HttpPut("me")]
-        public async Task<IActionResult> UpdateMyAccountInfo([FromBody] AccountDto dto)
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            await _accountService.UpdateAccountAsync(userId, dto);
-            return NoContent();
-        }
     }
 }
