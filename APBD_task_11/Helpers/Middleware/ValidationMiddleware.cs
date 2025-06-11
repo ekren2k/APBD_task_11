@@ -14,11 +14,10 @@ public class ValidationMiddleware
     private readonly List<ValidationRuleSet> _ruleSets;
     private IDeviceRepository _deviceRepository;
 
-    public ValidationMiddleware(RequestDelegate next, ILogger<ValidationMiddleware> logger, IDeviceRepository deviceRepository)
+    public ValidationMiddleware(RequestDelegate next, ILogger<ValidationMiddleware> logger)
     {
         _next = next;
         _logger = logger;
-        _deviceRepository = deviceRepository;
         
         var json = File.ReadAllText("ValidationRules.json");
         
@@ -33,6 +32,10 @@ public class ValidationMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        var serviceProvider = context.RequestServices;
+
+        using var scope = serviceProvider.CreateScope();
+        var deviceRepository = scope.ServiceProvider.GetRequiredService<IDeviceRepository>();
         _logger.LogInformation("Starting request validation");
         context.Request.EnableBuffering();
         context.Request.Body.Position = 0;
