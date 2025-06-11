@@ -1,5 +1,6 @@
 using System.Text;
 using APBD_task_11.Contexts;
+using APBD_task_11.Helpers.Middleware;
 using APBD_task_11.Helpers.Options;
 using APBD_task_11.Repositories.Implementations;
 using APBD_task_11.Repositories.Interfaces;
@@ -7,6 +8,7 @@ using APBD_task_11.Services.Implementations;
 using APBD_task_11.Services.Interfaces;
 using APBD_task_11.Services.Token;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -49,6 +51,10 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPositionService, PositionService>();
+builder.Services.AddScoped<IDeviceTypeService, DeviceTypeService>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ValidationMiddleware>();
 
 app.UseHttpsRedirection();
 

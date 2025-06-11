@@ -17,33 +17,33 @@ public class AccountRepository : IAccountRepository
     
     public async Task<bool> UsernameExistsAsync(string username)
     {
-        return await _context.Account.AnyAsync(a => a.Username == username);
+        return await _context.Accounts.AnyAsync(a => a.Username == username);
     }
 
     public async Task<Account?> GetAccountByUsernameAsync(string username)
     {
-        return await _context.Account
+        return await _context.Accounts
             .Include(a => a.Role)
             .FirstOrDefaultAsync(a => a.Username == username);
     }
 
     public async Task<Account> AddAccountAsync(Account account)
     {
-        _context.Account.Add(account);
+        _context.Accounts.Add(account);
         await _context.SaveChangesAsync();
         return account;
     }
     
     public async Task<Account?> GetAccountByIdAsync(int id)
     {
-        return await _context.Account
+        return await _context.Accounts
             .Include(a => a.Role)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
 
     public async Task UpdateAccountAsync(Account account)
     {
-        _context.Account.Update(account);
+        _context.Accounts.Update(account);
         await _context.SaveChangesAsync();
     }
 }

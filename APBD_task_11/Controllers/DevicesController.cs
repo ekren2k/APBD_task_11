@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using APBD_task_11.DTOs.Device;
+using APBD_task_11.Services.Implementations;
 using APBD_task_11.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ public class DevicesController : ControllerBase
 {
     
     private readonly IDeviceService _deviceService;
-    public DevicesController(IDeviceService deviceService)
+    private readonly IDeviceTypeService _deviceTypeService;
+    public DevicesController(IDeviceService deviceService, IDeviceTypeService deviceTypeService)
     {
         _deviceService = deviceService;
+        _deviceTypeService = deviceTypeService;
     }
 
     [Authorize(Roles = "Admin")]
@@ -102,5 +105,11 @@ public class DevicesController : ControllerBase
         {
             return NotFound(e.Message);
         }
+    }
+    [HttpGet("types")]
+    public async Task<IActionResult> GetDeviceTypes()
+    {
+        var types = await _deviceTypeService.GetAllDeviceTypesAsync();
+        return Ok(types);
     }
 }

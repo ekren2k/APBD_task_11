@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace APBD_task_11.DTOs.Device;
 
@@ -14,5 +15,5 @@ public class DeviceCreateOrUpdateDto
     public bool IsEnabled { get; set; }
 
     [Required]
-    public object AdditionalProperties { get; set; }
+    public JsonElement AdditionalProperties { get; set; }
 }

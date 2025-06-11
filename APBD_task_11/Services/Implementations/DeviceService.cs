@@ -68,7 +68,7 @@ public class DeviceService : IDeviceService
             Name = createdDevice.Name,
             DeviceTypeName = deviceType.Name,
             IsEnabled = createdDevice.IsEnabled,
-            AdditionalProperties = createdDevice.AdditionalProperties
+            AdditionalProperties = JsonSerializer.Deserialize<JsonElement>(createdDevice.AdditionalProperties)
         };
     }
 

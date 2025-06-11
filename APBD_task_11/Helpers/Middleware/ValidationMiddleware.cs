@@ -18,12 +18,14 @@ public class ValidationMiddleware
         _logger = logger;
         
         var json = File.ReadAllText("ValidationRules.json");
+        
         var root = JsonSerializer.Deserialize<ValidationRoot>(json, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
         _ruleSets = root?.Validations ?? new();
+        _logger.LogInformation("Loaded {Count} validation rule sets", _ruleSets.Count);
     }
 
     public async Task Invoke(HttpContext context)
@@ -55,10 +57,20 @@ public class ValidationMiddleware
                 rule.PreRequestName.Equals("IsEnabled", StringComparison.OrdinalIgnoreCase) &&
                 dto.IsEnabled.ToString().Equals(rule.PreRequestValue, StringComparison.OrdinalIgnoreCase)
                );
+            
+            if (matchingRuleSet == null)
+            {
+                _logger.LogWarning("No validation rules matched for DeviceTypeName '{DeviceTypeName}' with IsEnabled '{IsEnabled}'",
+                    dto.DeviceTypeName, dto.IsEnabled);
+            }
+            else
+            {
+                _logger.LogInformation("Found {Count} rules for DeviceTypeName '{DeviceTypeName}'", matchingRuleSet.Rules.Count, dto.DeviceTypeName);
+            }
 
             if (matchingRuleSet != null)
             {
-                var additionalProperties = JsonSerializer.Deserialize<Dictionary<string, string>>(dto.AdditionalProperties.ToString() ?? "{}");
+                var additionalProperties = JsonSerializer.Deserialize<Dictionary<string, string>>(dto.AdditionalProperties.GetRawText());
 
                 foreach (var rule in matchingRuleSet.Rules)
                 {
@@ -92,6 +104,7 @@ public class ValidationMiddleware
                 }
                 
             }
+            
             _logger.LogInformation("Validation completed successfully");
 
         }
