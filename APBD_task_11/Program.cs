@@ -68,12 +68,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<ValidationMiddleware>();
+
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ValidationMiddleware>();
 
 app.MapControllers();
 

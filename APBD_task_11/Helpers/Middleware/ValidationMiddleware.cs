@@ -69,7 +69,7 @@ public class ValidationMiddleware
                 _logger.LogInformation("Cannot validate request, not a valid device dto");
                 throw new Exception("Request body is not a valid device dto");
             }
-            var deviceType = await _deviceRepository.GetDeviceTypeByIdAsync(dto.TypeId);
+            var deviceType = await deviceRepository.GetDeviceTypeByIdAsync(dto.TypeId);
             if (deviceType == null)
                 throw new Exception($"Invalid device type ID: {dto.TypeId}");
 

@@ -21,7 +21,7 @@ public class DevicesController : ControllerBase
         _deviceTypeService = deviceTypeService;
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetDevicesAsync()
     {
@@ -40,7 +40,7 @@ public class DevicesController : ControllerBase
         return Ok(device);
     }
 
-    [Authorize(Roles = "Admin,User")]
+    //[Authorize(Roles = "Admin,User")]
     [HttpPost]
     public async Task<IActionResult> AddDeviceAsync([FromBody] DeviceCreateOrUpdateDto device)
     {
