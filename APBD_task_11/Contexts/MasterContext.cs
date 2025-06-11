@@ -26,9 +26,9 @@ public partial class MasterContext : DbContext
 
     public virtual DbSet<Position> Positions { get; set; }
     
-    public virtual DbSet<Account> Accounts { get; set; }
+    public virtual DbSet<Account> Account { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Role> Role { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -138,6 +138,16 @@ public partial class MasterContext : DbContext
                 .IsUnicode(false);
         });
 
+        
+        modelBuilder.Entity<Account>(entity =>
+        {
+            entity.ToTable("Account");
+        });
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Role");
+        });
+        
         OnModelCreatingPartial(modelBuilder);
     }
 

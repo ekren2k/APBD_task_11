@@ -10,13 +10,13 @@ namespace APBD_task_11.Controllers
 {
     [Route("api/accounts")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class AccountController : ControllerBase
     {
         
         private IAccountService _accountService;
         private IEmployeeService _employeeService;
 
-        public AccountsController(IAccountService service, IEmployeeService employeeService)
+        public AccountController(IAccountService service, IEmployeeService employeeService)
         {
             _accountService = service;
             _employeeService = employeeService;

@@ -37,7 +37,7 @@ public class DevicesController : ControllerBase
         return Ok(device);
     }
 
-    [Authorize(Roles = "Admin,User")]
+    //[Authorize(Roles = "Admin,User")]
     [HttpPost]
     public async Task<IActionResult> AddDeviceAsync([FromBody] DeviceCreateOrUpdateDto device)
     {
