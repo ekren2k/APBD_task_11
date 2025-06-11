@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using APBD_task_11.DTOs.Device;
+using APBD_task_11.Repositories.Interfaces;
 
 namespace APBD_task_11.Helpers.Middleware;
 
@@ -11,11 +12,13 @@ public class ValidationMiddleware
     private readonly RequestDelegate _next;
     private readonly ILogger<ValidationMiddleware> _logger;
     private readonly List<ValidationRuleSet> _ruleSets;
+    private IDeviceRepository _deviceRepository;
 
-    public ValidationMiddleware(RequestDelegate next, ILogger<ValidationMiddleware> logger)
+    public ValidationMiddleware(RequestDelegate next, ILogger<ValidationMiddleware> logger, IDeviceRepository deviceRepository)
     {
         _next = next;
         _logger = logger;
+        _deviceRepository = deviceRepository;
         
         var json = File.ReadAllText("ValidationRules.json");
         
@@ -51,9 +54,14 @@ public class ValidationMiddleware
                 _logger.LogInformation("Cannot validate request, not a valid device dto");
                 throw new Exception("Request body is not a valid device dto");
             }
+            var deviceType = await _deviceRepository.GetDeviceTypeByIdAsync(dto.TypeId);
+            if (deviceType == null)
+                throw new Exception($"Invalid device type ID: {dto.TypeId}");
+
+            var deviceTypeName = deviceType.Name;
             
             var matchingRuleSet = _ruleSets.FirstOrDefault(rule => 
-                rule.Type.Equals(dto.DeviceTypeName, StringComparison.OrdinalIgnoreCase) &&
+                rule.Type.Equals(deviceTypeName, StringComparison.OrdinalIgnoreCase) &&
                 rule.PreRequestName.Equals("IsEnabled", StringComparison.OrdinalIgnoreCase) &&
                 dto.IsEnabled.ToString().Equals(rule.PreRequestValue, StringComparison.OrdinalIgnoreCase)
                );
@@ -61,11 +69,11 @@ public class ValidationMiddleware
             if (matchingRuleSet == null)
             {
                 _logger.LogWarning("No validation rules matched for DeviceTypeName '{DeviceTypeName}' with IsEnabled '{IsEnabled}'",
-                    dto.DeviceTypeName, dto.IsEnabled);
+                   deviceTypeName, dto.IsEnabled);
             }
             else
             {
-                _logger.LogInformation("Found {Count} rules for DeviceTypeName '{DeviceTypeName}'", matchingRuleSet.Rules.Count, dto.DeviceTypeName);
+                _logger.LogInformation("Found {Count} rules for DeviceTypeName '{DeviceTypeName}'", matchingRuleSet.Rules.Count, deviceTypeName);
             }
 
             if (matchingRuleSet != null)

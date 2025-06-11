@@ -49,9 +49,9 @@ public class DeviceService : IDeviceService
 
     public async Task<DeviceCreateOrUpdateDto> CreateDeviceAsync(DeviceCreateOrUpdateDto dto)
     {
-        var deviceType = await _deviceRepository.GetDeviceTypeByNameAsync(dto.DeviceTypeName);
+        var deviceType = await _deviceRepository.GetDeviceTypeByIdAsync(dto.TypeId);
         if (deviceType == null)
-            throw new ArgumentException($"Invalid device type: {dto.DeviceTypeName}");
+            throw new ArgumentException($"Invalid device type: {dto.TypeId}");
 
         var device = new Device
         {
@@ -66,7 +66,7 @@ public class DeviceService : IDeviceService
         return new DeviceCreateOrUpdateDto
         {
             Name = createdDevice.Name,
-            DeviceTypeName = deviceType.Name,
+            TypeId = createdDevice.DeviceTypeId,
             IsEnabled = createdDevice.IsEnabled,
             AdditionalProperties = JsonSerializer.Deserialize<JsonElement>(createdDevice.AdditionalProperties)
         };
@@ -78,9 +78,9 @@ public class DeviceService : IDeviceService
         if (existingDevice == null)
             throw new KeyNotFoundException($"Device with id {id} not found");
 
-        var deviceType = await _deviceRepository.GetDeviceTypeByNameAsync(dto.DeviceTypeName);
+        var deviceType = await _deviceRepository.GetDeviceTypeByIdAsync(dto.TypeId);
         if (deviceType == null)
-            throw new ArgumentException($"Invalid device type: {dto.DeviceTypeName}");
+            throw new ArgumentException($"Invalid device type: {dto.TypeId}");
 
         existingDevice.Name = dto.Name;
         existingDevice.IsEnabled = dto.IsEnabled;

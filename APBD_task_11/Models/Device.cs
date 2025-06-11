@@ -10,7 +10,7 @@ public partial class Device
 
     public string AdditionalProperties { get; set; } = null!;
 
-    public int? DeviceTypeId { get; set; }
+    public int DeviceTypeId { get; set; }
 
     public virtual ICollection<DeviceEmployee> DeviceEmployees { get; set; } = new List<DeviceEmployee>();
 

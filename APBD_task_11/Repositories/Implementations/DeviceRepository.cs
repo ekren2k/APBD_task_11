@@ -60,7 +60,13 @@ public class DeviceRepository : IDeviceRepository
     {
         return await _context.Devices.AnyAsync(d => d.Id == id);
     }
-    
+
+    public async Task<DeviceType?> GetDeviceTypeByIdAsync(int id)
+    {
+        return await _context.DeviceTypes
+            .FirstOrDefaultAsync(dt => dt.Id == id);
+    }
+
     public async Task<DeviceType?> GetDeviceTypeByNameAsync(string name)
     {
         return await _context.DeviceTypes.FirstOrDefaultAsync(dt => dt.Name == name);
@@ -73,4 +79,5 @@ public class DeviceRepository : IDeviceRepository
             .ThenInclude(e => e.Person)
             .FirstOrDefaultAsync(de => de.DeviceId == deviceId && de.ReturnDate == null);
     }
+    
 }

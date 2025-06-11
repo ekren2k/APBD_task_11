@@ -28,7 +28,7 @@ public class AccountService : IAccountService
         {
             Username = accountDto.Username,
             Password = accountDto.Password,
-            RoleId = 1,//1 for user, 2 for admin
+            RoleId = accountDto.RoleId, //1 for user, 2 for admin
             EmployeeId = accountDto.EmployeeId
         };
 
