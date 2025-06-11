@@ -32,6 +32,18 @@ public class ValidationMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        if (context.Request.Method != HttpMethods.Post && context.Request.Method != HttpMethods.Put)
+        {
+            await _next(context);
+            return;
+        }
+
+        if (context.Request.ContentLength == null || context.Request.ContentLength == 0)
+        {
+            await _next(context);
+            return;
+        }
+        
         var serviceProvider = context.RequestServices;
 
         using var scope = serviceProvider.CreateScope();
